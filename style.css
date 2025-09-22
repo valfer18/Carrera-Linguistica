@@ -1,0 +1,207 @@
+@font-face{
+  font-family: "Quicksand";
+  src: url("");
+  }
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #ffff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  font-family: "Quicksand" , sans-serif;
+}
+
+.card-image {
+  flex: 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-color: #444;
+  box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
+  border-radius: 1rem;
+  
+}
+
+.start-screen {
+  display: flex;
+  justify-content: center;
+  align-items:center;
+  background: #fff;
+  border-radius: 12px;
+  padding: 40px;
+  width: 50%;
+  box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
+}
+
+.card {
+  background: white;
+  padding: 40px;
+  border-radius: 15px;
+  text-align: center;
+  max-width: 600px;
+}
+
+.start-screen h3 {
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  font-weight: lighter;
+  color: #741D2A;
+  
+}
+
+.start-screen h1 {
+  font-size: 2rem;
+  margin-bottom: 15px;
+  color: #BF393E;
+}
+
+.start-screen p {
+  font-size: 13px;
+  font-weight: lighter;
+  margin-right: 3rem;
+  margin-bottom: 30px;
+  color: #741D2A;
+}
+
+#start-btn {
+  font-size: 12px;
+  font-weight: bolder;
+  padding: 10px 24px;
+  background-color: #BF393E;
+  border: none;
+  border-radius: 100px;
+  color: white;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+#start-btn:hover {
+  background-color: #47111A;
+}
+
+/* Estilo juego */
+.game-container {
+
+  justify-content: center;
+  align-items:center;
+  background: #fff;
+  border-radius: 12px;
+  padding: 40px;
+  width: 50%;
+  box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
+}
+
+.track {
+  position: relative;
+  margin: 20px auto;
+  width: 90%;
+  height: 60px;
+  background: #ddd;
+  border-radius: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 15px;
+  direction: rtl;
+}
+
+.car {
+  position: absolute;
+  right: 0;
+  font-size: 40px;
+  transition: right 0.5s ease;
+}
+
+.finish {
+  position: absolute;
+  left: 10px;
+  font-size: 40px;
+}
+
+#status {
+  font-size: 18px;
+  margin: 15px 0;
+}
+
+#control-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+#control-buttons button {
+  padding: 8px 20px;
+  border: none;
+  border-radius: 40px;
+  cursor: pointer;
+  font-size: 12px;
+  color: white;
+}
+
+#pause-btn {
+  background-color: #47111A;
+}
+
+#pause-btn:hover {
+  background-color: #BF393E;
+}
+
+#home-btn {
+  background-color: #741D2A;
+}
+
+#home-btn:hover {
+  background-color: #BF393E;
+}
+
+#options{
+  display: flex;
+  flex-direction: row;    /* los botones en fila */
+  justify-content: center; /* centrar horizontalmente */
+  align-items: center;    /* centrar verticalmente */
+  gap: 15px;              /* espacio entre botones */
+  margin: 20px 0;         /* margen superior e inferior */
+  flex-wrap: wrap;
+}
+
+.info-bar {
+  display: flex;
+  justify-content: space-between ; /* Esto crea el espacio entre ellos */
+  width: 60%; /* O el ancho que necesites */
+  font-family: sans-serif; /* Para una fuente similar */
+  color: #741D2A; /* Un color gris oscuro */
+  font-size: small;
+  margin-bottom: 1rem;
+}
+
+#options button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 40px;
+  background-color: #BF393E;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s;
+  text-align: center;
+}
+
+#options button:hover {
+  background-color: #F5B87E;
+}
+
+#next-btn {
+  margin-top: 20px;
+  padding: 10px 15px;
+  border: none;
+  background-color: #2ecc71;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  display: none;
+}

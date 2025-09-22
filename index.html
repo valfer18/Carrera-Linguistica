@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carrera Lingüística</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <!-- Pantalla de inicio -->
+  <section class="start-screen" id="start-screen">
+    <div >
+      <h3>ESPAÑOL</h3>
+      <h1>Carrera Lingüística</h1>
+      <p>En este juego podrás mejorar tus conocimientos del idioma español mientras compites en una divertida carrera hacia la meta. A lo largo del camino deberás responder preguntas y superar retos de vocabulario, gramática y comprensión.
+      </p>
+
+      <div class="info-bar">
+        <span>Tiempo Estimado: 1 Min</span>
+        <span>Record: 100 Puntos</span>
+      </div>
+
+      <button id="start-btn">Empezar</button>
+    </div>
+
+
+    <div class="card-image">
+      <img src="./img/Español.png" alt="">
+    </div>
+  </section>
+
+
+  
+  <!-- Contenedor del juego (oculto al inicio) -->
+   
+  <div class="game-container" id="game-container" style="display: none;">
+    <div id="control-buttons">
+      <button id="pause-btn">Pausar</button>
+      <button id="home-btn">Volver</button>
+    </div>
+    
+    <div class="track">
+      <div class="car" id="car">🚗</div>
+      <div class="finish">🏆</div>
+    </div>
+
+    <div id="status">
+      <p>Puntos: <span id="score">0</span> / 100</p>
+      <p>Tiempo: <span id="timer">5</span> s</p>
+    </div>
+
+    <!-- Botones de control -->
+    
+
+    <div id="question-container">
+      <h2 id="question">Aquí aparecerá la pregunta</h2>
+      <div id="options"></div>
+    </div>
+
+    <button id="next-btn">Siguiente pregunta</button>
+  </div>
+
+  <script src="Juego.js"></script>
+</body>
+</html>
