@@ -1,7 +1,7 @@
 
 // --- Configuración de la API ---
 const API_CONFIG = {
-    BASE_URL: 'https://puramentebackend.onrender.com/api/gamedata/category/espanol'
+    BASE_URL: 'https://puramentebackend.onrender.com/api/gamedata/game/2/category/espanol'
 };
 
 // Variable global para almacenar todas las preguntas cargadas
