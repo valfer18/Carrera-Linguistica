@@ -7,6 +7,35 @@ const API_CONFIG = {
 // Variable global para almacenar todas las preguntas cargadas
 let allQuestionsData = {};
 
+// =========================================================
+// 1. GESTIÓN DE SONIDOS (NUEVO)
+// =========================================================
+
+const sound = {
+    music: new Audio('./src/game-music.mp3'),
+    correct: new Audio('./src/Acerto.mp3'),
+    incorrect: new Audio('./src/error.mp3'),
+    win: new Audio('./src/Gano.mp3'),
+    lose: new Audio('./src/Perdio.mp3'),
+};
+
+sound.music.loop = true;
+sound.music.volume = 0.4; // Música de fondo más baja
+
+function playMusic() {
+    sound.music.play().catch(e => console.log("Música no inició (requiere interacción):", e));
+}
+
+function pauseMusic() {
+    sound.music.pause();
+}
+
+function playSoundFX(audioElement) {
+    audioElement.currentTime = 0; // Reinicia el sonido si ya estaba reproduciendo
+    audioElement.volume = 1.0;
+    audioElement.play().catch(e => console.log("Error al reproducir sonido FX:", e));
+}
+
 class Question {
   constructor(text, options, answer) {
     this.text = text;
@@ -474,10 +503,12 @@ function handleAnswer(option, btn = null) {
   if (isCorrect) {
     if (btn) btn.style.backgroundColor = "green";
     showPointsEarned(pointsEarned, responseTime < 3, game.correctStreak % 3 === 0 && game.correctStreak > 0);
+    playSoundFX(sound.correct);
   } else {
     if (btn) btn.style.backgroundColor = "red";
     if (pointsEarned === 0) {
       showPointsLost("Respuesta incorrecta");
+      playSoundFX(sound.incorrect);
     }
   }
 
@@ -491,32 +522,53 @@ function handleAnswer(option, btn = null) {
   game.removeQuestion(currentQuestion);
 
   // Verificar condiciones de fin de juego
-  if (game.questions.length === 0) {
-    // Juego completado
-    game.addCompletionBonus();
-    scoreEl.textContent = game.rawScore; // Mostrar puntos brutos
-    updateCarPosition();
-    questionEl.textContent = `🎉 ¡Juego completado! Puntuación final: ${game.rawScore} puntos (${game.score}/100)`;
-    optionsEl.innerHTML = "";
-    showGameStats();
-    showRestartButton();
-    // Enviar datos finales al API
-    sendFinalGameData();
-  } else if (game.score >= 85) {
-    // Victoria temprana (85% del puntaje máximo)
-    questionEl.textContent = `🏆 ¡Excelente! Puntuación: ${game.rawScore} puntos (${game.score}/100)`;
-    optionsEl.innerHTML = "";
-    showGameStats();
-    showRestartButton();
-    // Enviar datos finales al API también en victoria temprana
-    sendFinalGameData();
-  } else {
-    // Continuar con la siguiente pregunta
-    setTimeout(() => {
-      showQuestion();
-    }, 1500);
-  }
+  // Verificar condiciones de fin de juego
+    if (game.questions.length === 0) {
+        // Juego completado
+        game.addCompletionBonus();
+        endGame('completed');
+    } else if (game.score >= 85) {
+        // Victoria temprana (85% del puntaje máximo)
+        endGame('early_win');
+    } else {
+        // Continuar con la siguiente pregunta
+        setTimeout(() => {
+            showQuestion();
+        }, 1500);
+    }
 }
+
+// NUEVA FUNCIÓN: Unifica la lógica de fin de juego
+function endGame(reason) {
+    pauseMusic(); // Detener música
+    
+    scoreEl.textContent = game.rawScore; 
+    updateCarPosition();
+    
+    let endMessage, finalSound;
+
+    const maxBasePoints = game.calculateMaxBaseScore();
+    const finalScoreNormalized = game.score;
+
+    if (reason === 'completed' && finalScoreNormalized >= 50) {
+        endMessage = `🎉 ¡Juego completado! Puntuación final: ${game.rawScore} puntos (${finalScoreNormalized}/100)`;
+        finalSound = sound.win;
+    } else if (reason === 'early_win' || finalScoreNormalized >= 85) {
+        endMessage = `🏆 ¡Victoria! Puntuación: ${game.rawScore} puntos (${finalScoreNormalized}/100)`;
+        finalSound = sound.win;
+    } else {
+        endMessage = `😭 ¡Juego Terminado! Puntuación: ${game.rawScore} puntos (${finalScoreNormalized}/100). ¡Inténtalo de nuevo!`;
+        finalSound = sound.lose;
+    }
+    
+    questionEl.textContent = endMessage;
+    optionsEl.innerHTML = "";
+    showGameStats();
+    showRestartButton();
+    sendFinalGameData();
+    playSoundFX(finalSound); // Reproducir sonido final
+}
+
 
 // Botón reinicio
 function showRestartButton() {
@@ -551,11 +603,13 @@ pauseBtn.onclick = () => {
     Array.from(optionsEl.children).forEach(b => b.disabled = true);
     pauseBtn.textContent = "Continuar";
     isPaused = true;
+    pauseMusic();
   } else {
     startTimer();
     Array.from(optionsEl.children).forEach(b => b.disabled = false);
     pauseBtn.textContent = "Pausar";
     isPaused = false;
+    playMusic()
   }
 };
 
