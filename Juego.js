@@ -1,11 +1,41 @@
-
 // --- Configuración de la API ---
 const API_CONFIG = {
     BASE_URL: 'https://puramentebackend.onrender.com/api/gamedata/game/2/category/espanol'
 };
 
+// ========================================
+// CONFIGURACIÓN DEL JUEGO
+// ========================================
+
+const GAME_CONFIG = {
+  GAME_ID: 2,  // ID del juego original
+  API_BASE_URL: 'https://puramentebackend.onrender.com' // Backend producción
+};
+
 // Variable global para almacenar todas las preguntas cargadas
 let allQuestionsData = {};
+
+// Variables globales para parámetros de URL
+let currentUserId = null;
+let sessionToken = '';
+let subject = 'espanol'; // Materia original
+
+// Función para obtener y validar parámetros de la URL
+function getURLParameters() {
+  const urlParams = new URLSearchParams(window.location.search);
+  currentUserId = urlParams.get('user_id') || null;
+  sessionToken = urlParams.get('session') || '';
+  subject = urlParams.get('subject') || 'espanol'; // Materia original
+
+  return {
+    userId: currentUserId,
+    session: sessionToken,
+    subject: subject
+  };
+}
+
+// Capturar parámetros al cargar
+getURLParameters();
 
 // =========================================================
 // 1. GESTIÓN DE SONIDOS (NUEVO)
@@ -166,46 +196,67 @@ class Game {
 // --- Funciones de la API ---
 async function loadGameDataFromAPI() {
     try {
-        const response = await fetch(API_CONFIG.BASE_URL);
-        const apiResponse = await response.json();
-        
-        // Verificar que la respuesta sea exitosa
-        if (!apiResponse.success) {
-            throw new Error('La API retornó un error: ' + (apiResponse.message || 'Error desconocido'));
+        if (!subject) {
+            throw new Error('Falta el parámetro requerido: subject en la URL');
         }
-        
-        // Verificar que haya datos
-        if (!apiResponse.data || !Array.isArray(apiResponse.data)) {
-            throw new Error('La API no retornó datos válidos');
+
+        let apiUrl = `${GAME_CONFIG.API_BASE_URL}/api/gamedata/game/${GAME_CONFIG.GAME_ID}/category/${encodeURIComponent(subject)}`;
+        if (sessionToken) {
+          apiUrl += `?session=${sessionToken}`;
         }
-        
-        // Transformar la estructura de la API al formato que usa el juego
-        const gameTopics = {};
-        
-        apiResponse.data.forEach(item => {
-            // Extraer los datos de cada subcategoría
-            Object.keys(item.gamedata).forEach(subject => {
-                gameTopics[subject] = item.gamedata[subject];
-            });
-        });
-        
-        return gameTopics;
+
+        const response = await fetch(apiUrl);
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const apiData = await response.json();
+        if (apiData.success && apiData.data) {
+          const gameTopics = {};
+
+          apiData.data.forEach(item => {
+            if (Array.isArray(item.gamedata)) {
+              item.gamedata.forEach(gameDataItem => {
+                if (gameDataItem.title && gameDataItem.subcategoria) {
+                  const topicKey = gameDataItem.title;
+                  gameTopics[topicKey] = gameDataItem.subcategoria;
+                } else {
+                  Object.keys(gameDataItem).forEach(key => {
+                    if (Array.isArray(gameDataItem[key]) && gameDataItem[key].length > 0) {
+                      gameTopics[key] = gameDataItem[key];
+                    }
+                  });
+                }
+              });
+            } else {
+              Object.keys(item.gamedata).forEach(subcategory => {
+                gameTopics[subcategory] = item.gamedata[subcategory];
+              });
+            }
+          });
+
+          return gameTopics;
+        } else {
+          throw new Error('Respuesta de API inválida: ' + JSON.stringify(apiData));
+        }
     } catch (error) {
-        console.error('Error al cargar datos de la API:', error);
-        throw error;
+        alert(`Error al cargar los datos del juego:\n${error.message}\n\nPor favor, verifica la consola para más detalles.`);
+        return null;
     }
 }
 
 async function loadGameData() {
-    showLoadingMessage('Cargando datos desde API...');
-    
     try {
-        const gameData = await loadGameDataFromAPI();
-        hideLoadingMessage();
-        return gameData;
+        let gameData = await loadGameDataFromAPI();
+        if (gameData && Object.keys(gameData).length > 0) {
+            return gameData;
+        } else {
+            throw new Error('No se pudieron cargar los datos del juego');
+        }
     } catch (error) {
-        hideLoadingMessage();
-        throw new Error('Error al conectar con la API: ' + error.message);
+        alert('Error al cargar los datos del juego. Por favor, recarga la página.');
+        return null;
     }
 }
 
