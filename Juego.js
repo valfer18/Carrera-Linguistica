@@ -855,12 +855,12 @@ startBtn.onclick = async () => {
 // Cargar preguntas en segundo plano cuando se carga la página
 window.addEventListener('load', async () => {
   try {
-    console.log('Precargando preguntas de la API...');
+    console.log('Precargando preguntas...');
     const questions = await loadQuestions();
     game.updateQuestions(questions);
-    console.log(`Cargadas ${questions.length} preguntas desde la API`);
+    console.log(`Cargadas ${questions.length} preguntas `);
   } catch (error) {
-    console.error('Error al precargar preguntas de la API:', error);
+    console.error('Error al precargar preguntas :', error);
     showErrorMessage('Error al cargar preguntas. Revisa tu conexión a internet.');
   }
 });
